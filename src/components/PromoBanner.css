@@ -1,0 +1,119 @@
+.promo-banner {
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #ff2e2e 0%, #c41e1e 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.promo-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+}
+
+.promo-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -5%;
+  width: 400px;
+  height: 400px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+}
+
+.promo-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.promo-text {
+  flex: 1;
+}
+
+.promo-title {
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 16px;
+  letter-spacing: 4px;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.promo-subtitle {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+.promo-code {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+}
+
+.promo-code span {
+  display: inline-block;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-left: 12px;
+}
+
+.promo-btn {
+  padding: 18px 48px;
+  background: #fff;
+  color: #ff2e2e;
+  border: none;
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.promo-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  background: #0f0f0f;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .promo-banner {
+    padding: 60px 20px;
+  }
+
+  .promo-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .promo-code {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .promo-code span {
+    margin-left: 0;
+  }
+}

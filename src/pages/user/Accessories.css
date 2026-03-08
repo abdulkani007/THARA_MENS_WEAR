@@ -1,0 +1,258 @@
+.accessories-page {
+  min-height: 100vh;
+  background: #0a0a0a;
+  padding: 40px 20px;
+}
+
+.accessories-header {
+  text-align: center;
+  margin-bottom: 48px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, rgba(255, 46, 46, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+  border-radius: 16px;
+}
+
+.accessories-title {
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #fff;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.accessories-subtitle {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 1px;
+}
+
+.accessories-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: 32px;
+}
+
+.accessories-filter-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: #141414;
+  border-radius: 14px;
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.accessories-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.accessories-filter-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.accessories-clear-btn {
+  background: transparent;
+  border: 1px solid #ff2a2a;
+  color: #ff2a2a;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.accessories-clear-btn:hover {
+  background: #ff2a2a;
+  color: #fff;
+}
+
+.accessories-filter-section {
+  margin-bottom: 20px;
+}
+
+.accessories-filter-section label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.accessories-filter-input,
+.accessories-filter-select {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 10px;
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.accessories-filter-input:focus,
+.accessories-filter-select:focus {
+  outline: none;
+  border-color: #ff2a2a;
+}
+
+.accessories-filter-info {
+  padding-top: 16px;
+  border-top: 1px solid #2a2a2a;
+  margin-top: 16px;
+}
+
+.accessories-filter-info p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+.accessories-products-section {
+  flex: 1;
+  min-height: 400px;
+}
+
+.accessories-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.accessories-no-products {
+  text-align: center;
+  padding: 80px 20px;
+  background: #161616;
+  border-radius: 14px;
+}
+
+.accessories-no-products p {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 20px;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .accessories-page {
+    padding: 32px 16px;
+  }
+
+  .accessories-title {
+    font-size: 40px;
+    letter-spacing: 3px;
+  }
+
+  .accessories-container {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .accessories-filter-sidebar {
+    width: 100%;
+    position: static;
+  }
+
+  .accessories-products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .accessories-page {
+    padding: 24px 12px;
+  }
+
+  .accessories-header {
+    margin-bottom: 32px;
+    padding: 32px 16px;
+  }
+
+  .accessories-title {
+    font-size: 32px;
+    letter-spacing: 2px;
+  }
+
+  .accessories-subtitle {
+    font-size: 14px;
+  }
+
+  .accessories-container {
+    gap: 20px;
+  }
+
+  .accessories-filter-sidebar {
+    padding: 16px;
+  }
+
+  .accessories-filter-header h3 {
+    font-size: 16px;
+  }
+
+  .accessories-filter-input {
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+
+  .accessories-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .accessories-no-products {
+    padding: 60px 16px;
+  }
+
+  .accessories-no-products p {
+    font-size: 16px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .accessories-page {
+    padding: 20px 10px;
+  }
+
+  .accessories-header {
+    padding: 24px 12px;
+  }
+
+  .accessories-title {
+    font-size: 24px;
+    letter-spacing: 1px;
+  }
+
+  .accessories-subtitle {
+    font-size: 13px;
+  }
+
+  .accessories-filter-sidebar {
+    padding: 12px;
+  }
+
+  .accessories-filter-section {
+    margin-bottom: 16px;
+  }
+
+  .accessories-products-grid {
+    gap: 10px;
+  }
+}

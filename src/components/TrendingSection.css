@@ -1,0 +1,201 @@
+.trending-section {
+  padding: 100px 20px;
+  background: #000;
+}
+
+.trending-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.trending-title {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.trending-subtitle {
+  font-size: 18px;
+  font-weight: 300;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 60px;
+  letter-spacing: 3px;
+}
+
+.trending-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+  margin-bottom: 60px;
+  justify-items: center;
+}
+
+.trending-card {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.trending-card:hover {
+  transform: translateY(-8px);
+}
+
+.trending-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.trending-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.trending-card:hover .trending-image {
+  transform: scale(1.05);
+}
+
+.trending-wishlist {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.trending-card:hover .trending-wishlist {
+  opacity: 1;
+}
+
+.trending-wishlist:hover {
+  background: #ff2e2e;
+  transform: scale(1.1);
+}
+
+.trending-quick-view {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: rgba(255, 46, 46, 0.95);
+  color: #fff;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.trending-card:hover .trending-quick-view {
+  transform: translateY(0);
+}
+
+.trending-info {
+  padding: 0 8px;
+}
+
+.trending-product-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 6px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trending-product-category {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.trending-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trending-price {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ff2e2e;
+}
+
+.trending-stock {
+  font-size: 12px;
+  color: #ffa500;
+  font-weight: 500;
+}
+
+.trending-cta {
+  text-align: center;
+}
+
+.trending-view-all {
+  padding: 16px 48px;
+  background: transparent;
+  border: 2px solid #ff2e2e;
+  color: #ff2e2e;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.trending-view-all:hover {
+  background: #ff2e2e;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255, 46, 46, 0.4);
+}
+
+@media (max-width: 768px) {
+  .trending-section {
+    padding: 60px 20px;
+  }
+
+  .trending-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .trending-image-wrapper {
+    height: 240px;
+  }
+
+  .trending-product-name {
+    font-size: 16px;
+  }
+
+  .trending-price {
+    font-size: 18px;
+  }
+}

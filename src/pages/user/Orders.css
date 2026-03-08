@@ -1,0 +1,272 @@
+.orders-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  min-height: calc(100vh - 200px);
+}
+
+.orders-header {
+  margin-bottom: 32px;
+}
+
+.orders-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.order-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.order-header h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.order-date {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+.order-status {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.order-products {
+  margin-bottom: 20px;
+}
+
+.order-product-item {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.order-product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.order-product-info {
+  flex: 1;
+}
+
+.order-product-info h4 {
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: #fff;
+}
+
+.order-product-details {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+.order-product-price {
+  text-align: right;
+  font-size: 18px;
+  font-weight: 700;
+  color: #FF2E2E;
+}
+
+.order-summary {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 16px;
+}
+
+.order-summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.order-summary-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.order-summary-value {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.order-coupon {
+  color: #22c55e;
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 12px;
+}
+
+.order-total-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.order-total-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #FF2E2E;
+}
+
+.empty-orders {
+  text-align: center;
+  padding: 80px 20px;
+  background: rgba(255, 46, 46, 0.03);
+  border: 2px dashed rgba(255, 46, 46, 0.2);
+  border-radius: 16px;
+}
+
+.empty-orders p {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 1024px) {
+  .orders-page {
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .orders-page {
+    padding: 16px 12px 80px;
+  }
+
+  .orders-title {
+    font-size: 28px;
+  }
+
+  .orders-list {
+    gap: 16px;
+  }
+
+  .order-card {
+    padding: 16px;
+  }
+
+  .order-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .order-header h3 {
+    font-size: 18px;
+  }
+
+  .order-status {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .order-product-item {
+    flex-direction: column;
+    padding: 12px;
+  }
+
+  .order-product-image {
+    width: 100%;
+    height: 180px;
+  }
+
+  .order-product-info h4 {
+    font-size: 15px;
+  }
+
+  .order-product-details {
+    font-size: 13px;
+  }
+
+  .order-product-price {
+    text-align: left;
+    font-size: 16px;
+  }
+
+  .order-summary-row {
+    font-size: 13px;
+  }
+
+  .order-total-label {
+    font-size: 16px;
+  }
+
+  .order-total-price {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orders-page {
+    padding: 16px 8px 80px;
+  }
+
+  .orders-title {
+    font-size: 24px;
+  }
+
+  .order-card {
+    padding: 14px;
+  }
+
+  .order-header h3 {
+    font-size: 16px;
+  }
+
+  .order-product-image {
+    height: 160px;
+  }
+
+  .order-product-info h4 {
+    font-size: 14px;
+  }
+
+  .order-summary-row {
+    font-size: 12px;
+  }
+
+  .order-total-label {
+    font-size: 15px;
+  }
+
+  .order-total-price {
+    font-size: 18px;
+  }
+}

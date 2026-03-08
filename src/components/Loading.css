@@ -1,0 +1,221 @@
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in;
+  overflow: hidden;
+}
+
+.loading-content {
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 48px;
+}
+
+.loading-logo-image {
+  width: 220px;
+  height: auto;
+  object-fit: contain;
+  animation: logoAppear 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+  z-index: 2;
+  filter: brightness(1.1) contrast(1.05);
+  transition: opacity 0.3s ease;
+  mix-blend-mode: screen;
+}
+
+.logo-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 46, 46, 0.25) 0%, rgba(255, 46, 46, 0.1) 40%, transparent 70%);
+  animation: pulseGlow 3s ease-in-out infinite;
+  z-index: 1;
+  filter: blur(60px);
+  opacity: 0.8;
+}
+
+.loading-subtitle {
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 48px 0;
+  text-transform: uppercase;
+  animation: subtitleFade 1.2s ease-out 0.6s forwards;
+  opacity: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.loading-bar {
+  width: 180px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0 auto;
+  border-radius: 1px;
+  overflow: hidden;
+  animation: barFade 1s ease-out 1s forwards;
+  opacity: 0;
+  position: relative;
+}
+
+.loading-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 46, 46, 0.8), transparent);
+  animation: progressSlide 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes logoAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(-30px);
+    filter: brightness(1.1) contrast(1.05) blur(15px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: brightness(1.1) contrast(1.05) blur(0);
+  }
+}
+
+@keyframes subtitleFade {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes barFade {
+  from {
+    opacity: 0;
+    transform: scaleX(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+@keyframes progressSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(450%);
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .loading-logo-image {
+    width: 200px;
+  }
+
+  .logo-glow {
+    width: 350px;
+    height: 350px;
+  }
+
+  .loading-bar {
+    width: 160px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .loading-logo-image {
+    width: 160px;
+  }
+
+  .loading-subtitle {
+    font-size: 13px;
+    letter-spacing: 6px;
+    margin-bottom: 40px;
+  }
+
+  .logo-glow {
+    width: 280px;
+    height: 280px;
+    filter: blur(50px);
+  }
+
+  .loading-bar {
+    width: 140px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .loading-logo-image {
+    width: 130px;
+  }
+
+  .loading-subtitle {
+    font-size: 11px;
+    letter-spacing: 5px;
+    margin-bottom: 36px;
+  }
+
+  .logo-glow {
+    width: 240px;
+    height: 240px;
+    filter: blur(40px);
+  }
+
+  .loading-bar {
+    width: 120px;
+  }
+}
