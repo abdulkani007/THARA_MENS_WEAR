@@ -18,28 +18,45 @@ const ManageProducts = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    
+    try {
       const product = products.find(p => p.id === id);
       
       // Delete from products
       await deleteDoc(doc(db, 'products', id));
       
-      // Delete images
+      // Delete images (non-blocking)
       if (product?.images) {
-        await deleteProductImages(product.images);
+        deleteProductImages(product.images).catch(err => console.error('Image deletion error:', err));
       }
       
       // Remove from all users' carts
-      const cartQuery = query(collection(db, 'cart'), where('productId', '==', id));
-      const cartSnapshot = await getDocs(cartQuery);
-      await Promise.all(cartSnapshot.docs.map(d => deleteDoc(d.ref)));
+      try {
+        const cartQuery = query(collection(db, 'cart'), where('productId', '==', id));
+        const cartSnapshot = await getDocs(cartQuery);
+        await Promise.all(cartSnapshot.docs.map(d => deleteDoc(d.ref)));
+      } catch (err) {
+        console.error('Cart cleanup error:', err);
+      }
       
       // Remove from all users' favorites
-      const favQuery = query(collection(db, 'favorites'), where('productId', '==', id));
-      const favSnapshot = await getDocs(favQuery);
-      await Promise.all(favSnapshot.docs.map(d => deleteDoc(d.ref)));
+      try {
+        const favQuery = query(collection(db, 'favorites'), where('productId', '==', id));
+        const favSnapshot = await getDocs(favQuery);
+        await Promise.all(favSnapshot.docs.map(d => deleteDoc(d.ref)));
+      } catch (err) {
+        console.error('Favorites cleanup error:', err);
+      }
       
-      toast.success('Product deleted');
+      toast.success('Product deleted successfully');
+    } catch (error) {
+      console.error('Delete error:', error);
+      if (error.code === 'permission-denied') {
+        toast.error('Permission denied. Please check Firestore rules.');
+      } else {
+        toast.error('Failed to delete product: ' + error.message);
+      }
     }
   };
 
@@ -50,19 +67,24 @@ const ManageProducts = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const filteredImages = formData.images?.filter(img => img.trim() !== '') || [];
-    
-    await updateDoc(doc(db, 'products', editingProduct), {
-      name: formData.name,
-      description: formData.description,
-      price: parseFloat(formData.price),
-      stock: parseInt(formData.stock),
-      category: formData.category,
-      images: filteredImages,
-      imageURL: filteredImages[0] || formData.imageURL
-    });
-    toast.success('Product updated');
-    setEditingProduct(null);
+    try {
+      const filteredImages = formData.images?.filter(img => img.trim() !== '') || [];
+      
+      await updateDoc(doc(db, 'products', editingProduct), {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock),
+        category: formData.category,
+        images: filteredImages,
+        imageURL: filteredImages[0] || formData.imageURL
+      });
+      toast.success('Product updated successfully');
+      setEditingProduct(null);
+    } catch (error) {
+      console.error('Update error:', error);
+      toast.error('Failed to update product: ' + error.message);
+    }
   };
 
   return (
@@ -136,12 +158,12 @@ const ManageProducts = () => {
         {products.map(product => (
           <div key={product.id} className="card">
             <img
-              src={product.imageURL || product.images?.[0] || '/placeholder-product.png'}
-              alt={product.name}
+              src={product.imageURL || product.images?.[0] || '/default-product.png'}
+              alt={product.name || 'Product'}
               style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '16px' }}
               onError={(e) => { 
-                console.error('Image load error for product:', product.name, product.imageURL || product.images?.[0]);
-                e.target.src = '/placeholder-product.png'; 
+                e.target.onerror = null;
+                e.target.src = '/default-product.png'; 
               }}
             />
             <h3 style={{ fontSize: '20px', marginBottom: '8px' }}>{product.name}</h3>

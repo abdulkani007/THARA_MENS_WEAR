@@ -109,21 +109,39 @@ const KidsCollection = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Delete this product?')) {
+    if (!window.confirm('Delete this product?')) return;
+    
+    try {
+      // Delete from kidsProducts
       await deleteDoc(doc(db, 'kidsProducts', id));
       
       // Remove from all users' carts
-      const cartQuery = query(collection(db, 'cart'), where('productId', '==', id));
-      const cartSnapshot = await getDocs(cartQuery);
-      await Promise.all(cartSnapshot.docs.map(d => deleteDoc(d.ref)));
+      try {
+        const cartQuery = query(collection(db, 'cart'), where('productId', '==', id));
+        const cartSnapshot = await getDocs(cartQuery);
+        await Promise.all(cartSnapshot.docs.map(d => deleteDoc(d.ref)));
+      } catch (err) {
+        console.error('Cart cleanup error:', err);
+      }
       
       // Remove from all users' favorites
-      const favQuery = query(collection(db, 'favorites'), where('productId', '==', id));
-      const favSnapshot = await getDocs(favQuery);
-      await Promise.all(favSnapshot.docs.map(d => deleteDoc(d.ref)));
+      try {
+        const favQuery = query(collection(db, 'favorites'), where('productId', '==', id));
+        const favSnapshot = await getDocs(favQuery);
+        await Promise.all(favSnapshot.docs.map(d => deleteDoc(d.ref)));
+      } catch (err) {
+        console.error('Favorites cleanup error:', err);
+      }
       
-      toast.success('Product deleted');
+      toast.success('Product deleted successfully');
       loadProducts();
+    } catch (error) {
+      console.error('Delete error:', error);
+      if (error.code === 'permission-denied') {
+        toast.error('Permission denied. Please check Firestore rules.');
+      } else {
+        toast.error('Failed to delete product: ' + error.message);
+      }
     }
   };
 
@@ -146,7 +164,15 @@ const KidsCollection = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
         {products.map(product => (
           <div key={product.id} className="card" style={{ padding: '0', overflow: 'hidden' }}>
-            <img src={product.images?.[0]} alt={product.name} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+            <img 
+              src={product.imageURL || product.images?.[0] || '/default-product.png'} 
+              alt={product.name || 'Product'} 
+              style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+              onError={(e) => { 
+                e.target.onerror = null;
+                e.target.src = '/default-product.png'; 
+              }}
+            />
             <div style={{ padding: '16px' }}>
               <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.5)', marginBottom: '4px' }}>{product.category}</p>
               <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>{product.name}</h3>

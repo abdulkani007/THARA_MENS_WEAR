@@ -71,21 +71,39 @@ const AccessoriesManagement = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Delete this accessory?')) {
+    if (!window.confirm('Delete this accessory?')) return;
+    
+    try {
+      // Delete from products
       await deleteDoc(doc(db, 'products', id));
       
       // Remove from all users' carts
-      const cartQuery = query(collection(db, 'cart'), where('productId', '==', id));
-      const cartSnapshot = await getDocs(cartQuery);
-      await Promise.all(cartSnapshot.docs.map(d => deleteDoc(d.ref)));
+      try {
+        const cartQuery = query(collection(db, 'cart'), where('productId', '==', id));
+        const cartSnapshot = await getDocs(cartQuery);
+        await Promise.all(cartSnapshot.docs.map(d => deleteDoc(d.ref)));
+      } catch (err) {
+        console.error('Cart cleanup error:', err);
+      }
       
       // Remove from all users' favorites
-      const favQuery = query(collection(db, 'favorites'), where('productId', '==', id));
-      const favSnapshot = await getDocs(favQuery);
-      await Promise.all(favSnapshot.docs.map(d => deleteDoc(d.ref)));
+      try {
+        const favQuery = query(collection(db, 'favorites'), where('productId', '==', id));
+        const favSnapshot = await getDocs(favQuery);
+        await Promise.all(favSnapshot.docs.map(d => deleteDoc(d.ref)));
+      } catch (err) {
+        console.error('Favorites cleanup error:', err);
+      }
       
-      toast.success('Accessory deleted');
+      toast.success('Accessory deleted successfully');
       loadProducts();
+    } catch (error) {
+      console.error('Delete error:', error);
+      if (error.code === 'permission-denied') {
+        toast.error('Permission denied. Please check Firestore rules.');
+      } else {
+        toast.error('Failed to delete accessory: ' + error.message);
+      }
     }
   };
 
