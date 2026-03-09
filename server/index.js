@@ -8,7 +8,14 @@ const Image = require('./models/Image');
 
 const app = express();
 
-app.use(cors());
+// CORS Configuration - Allow all origins for deployed frontend
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 

@@ -2,12 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://username:password@cluster.mongodb.net/thara', {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -35,7 +36,8 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
       contentType: req.file.mimetype
     });
     await image.save();
-    res.json({ imageUrl: `http://localhost:5000/api/images/${image._id}` });
+    const baseUrl = process.env.BASE_URL || 'https://thara-mens-wear.onrender.com';
+    res.json({ imageUrl: `${baseUrl}/api/images/${image._id}` });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -62,4 +64,5 @@ app.delete('/api/images/:id', async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log('Server on port 5000'));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
