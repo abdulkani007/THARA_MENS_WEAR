@@ -256,7 +256,12 @@ const AddProduct = () => {
           </div>
 
           <div className="form-group full-width">
-            <ImageInput images={formData.images} setImages={setImages} maxImages={5} />
+            <ImageInput 
+              images={formData.images} 
+              setImages={setImages} 
+              maxImages={5}
+              productName={formData.name || 'New Product'}
+            />
           </div>
 
           <div className="form-group full-width">

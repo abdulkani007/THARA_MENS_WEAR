@@ -15,7 +15,9 @@ const Banners = () => {
     buttonText: 'Shop Now',
     link: '/login',
     displayLocation: 'landing',
-    image: null
+    image: null,
+    imageURL: '',
+    useURL: false
   });
 
   useEffect(() => {
@@ -35,15 +37,35 @@ const Banners = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.image) {
-      toast.error('Please select an image');
-      return;
+    
+    let imageURL = formData.imageURL;
+    
+    if (!formData.useURL) {
+      if (!formData.image) {
+        toast.error('Please select an image');
+        return;
+      }
+      setUploading(true);
+      try {
+        imageURL = await uploadImageToMongoDB(
+          formData.image, 
+          `banner_${Date.now()}`,
+          formData.title || 'Banner',
+          formData.image.name
+        );
+      } catch (error) {
+        toast.error(error.message);
+        setUploading(false);
+        return;
+      }
+    } else {
+      if (!imageURL) {
+        toast.error('Please enter image URL');
+        return;
+      }
     }
 
-    setUploading(true);
     try {
-      const imageURL = await uploadImageToMongoDB(formData.image, `banner_${Date.now()}`);
-
       await addDoc(collection(db, 'banners'), {
         title: formData.title,
         subtitle: formData.subtitle,
@@ -56,7 +78,16 @@ const Banners = () => {
       });
 
       toast.success('Banner created');
-      setFormData({ title: '', subtitle: '', buttonText: 'Shop Now', link: '/login', displayLocation: 'landing', image: null });
+      setFormData({ 
+        title: '', 
+        subtitle: '', 
+        buttonText: 'Shop Now', 
+        link: '/login', 
+        displayLocation: 'landing', 
+        image: null,
+        imageURL: '',
+        useURL: false
+      });
       setShowForm(false);
       loadBanners();
     } catch (error) {
@@ -185,12 +216,49 @@ const Banners = () => {
               <option value="landing">Landing Page</option>
               <option value="home">Home Page</option>
             </select>
-            <div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '12px 16px', background: '#0f0f0f', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '8px' }}>
-                <FiImage /> {formData.image ? formData.image.name : 'Select Banner Image'}
-                <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} required />
+            
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '8px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  checked={!formData.useURL}
+                  onChange={() => setFormData({ ...formData, useURL: false, imageURL: '' })}
+                />
+                <span>Upload Image</span>
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  checked={formData.useURL}
+                  onChange={() => setFormData({ ...formData, useURL: true, image: null })}
+                />
+                <span>Use Image URL</span>
               </label>
             </div>
+            
+            {!formData.useURL ? (
+              <div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '12px 16px', background: '#0f0f0f', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '8px' }}>
+                  <FiImage /> {formData.image ? formData.image.name : 'Select Banner Image'}
+                  <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
+                </label>
+              </div>
+            ) : (
+              <input
+                type="url"
+                placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
+                value={formData.imageURL}
+                onChange={(e) => setFormData({ ...formData, imageURL: e.target.value })}
+                style={{
+                  padding: '12px 16px',
+                  background: '#0f0f0f',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  fontSize: '14px'
+                }}
+              />
+            )}
             <div style={{ display: 'flex', gap: '12px' }}>
               <button type="submit" disabled={uploading} style={{ flex: 1, padding: '12px', background: '#ff2e2e', border: 'none', borderRadius: '8px', color: '#fff', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}>
                 {uploading ? 'Uploading...' : 'Create Banner'}

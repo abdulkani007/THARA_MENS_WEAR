@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { uploadImageToMongoDB } from '../services/imageService';
 import toast from 'react-hot-toast';
 
-const ImageInput = ({ images, setImages, maxImages = 5, productId }) => {
+const ImageInput = ({ images, setImages, maxImages = 5, productId, productName = 'Product' }) => {
   const [uploading, setUploading] = useState({});
 
   const handleImageUpload = async (e, index) => {
@@ -22,7 +22,12 @@ const ImageInput = ({ images, setImages, maxImages = 5, productId }) => {
     setUploading(prev => ({ ...prev, [index]: true }));
 
     try {
-      const imageUrl = await uploadImageToMongoDB(file, productId || Date.now().toString());
+      const imageUrl = await uploadImageToMongoDB(
+        file, 
+        productId || Date.now().toString(),
+        productName,
+        file.name
+      );
       
       const newImages = [...images];
       newImages[index] = imageUrl;

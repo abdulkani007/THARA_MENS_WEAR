@@ -29,10 +29,14 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
     }
 
     const productId = req.body.productId || Date.now().toString();
+    const productName = req.body.productName || 'Untitled Product';
+    const fileName = req.body.fileName || req.file.originalname || 'image.jpg';
     const base64Image = req.file.buffer.toString('base64');
 
     const image = new Image({
       productId,
+      productName,
+      fileName,
       imageData: base64Image,
       contentType: req.file.mimetype
     });
@@ -86,6 +90,18 @@ app.delete('/api/images/product/:productId', async (req, res) => {
   try {
     const result = await Image.deleteMany({ productId: req.params.productId });
     res.json({ success: true, deletedCount: result.deletedCount });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/images', async (req, res) => {
+  try {
+    const images = await Image.find()
+      .select('productId productName fileName contentType createdAt')
+      .sort({ createdAt: -1 })
+      .limit(100);
+    res.json({ success: true, images });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

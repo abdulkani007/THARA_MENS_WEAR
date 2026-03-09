@@ -6,6 +6,14 @@ const imageSchema = new mongoose.Schema({
     required: true,
     index: true
   },
+  productName: {
+    type: String,
+    default: 'Untitled Product'
+  },
+  fileName: {
+    type: String,
+    default: 'image.jpg'
+  },
   imageData: {
     type: String,
     required: true
