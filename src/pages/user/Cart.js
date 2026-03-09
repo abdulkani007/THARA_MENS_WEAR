@@ -7,8 +7,7 @@ import BackButton from '../../components/BackButton';
 import './Cart.css';
 
 const Cart = () => {
-  const { cart, removeFromCart, updateCartQuantity, clearCart } = useCart();
-  const { currentUser } = useAuth();
+  const { cart, removeFromCart, updateCartQuantity } = useCart();
   const navigate = useNavigate();
 
   const totalPrice = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);

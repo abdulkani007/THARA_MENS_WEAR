@@ -41,6 +41,7 @@ const Profile = () => {
     if (userData?.role === 'admin') {
       loadBusinessInfo();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser, userData?.role]);
 
   const loadUserData = async () => {
