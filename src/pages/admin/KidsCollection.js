@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import toast from 'react-hot-toast';
 import { FiPlus, FiEdit2, FiTrash2, FiX } from 'react-icons/fi';
@@ -111,6 +111,17 @@ const KidsCollection = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Delete this product?')) {
       await deleteDoc(doc(db, 'kidsProducts', id));
+      
+      // Remove from all users' carts
+      const cartQuery = query(collection(db, 'cart'), where('productId', '==', id));
+      const cartSnapshot = await getDocs(cartQuery);
+      await Promise.all(cartSnapshot.docs.map(d => deleteDoc(d.ref)));
+      
+      // Remove from all users' favorites
+      const favQuery = query(collection(db, 'favorites'), where('productId', '==', id));
+      const favSnapshot = await getDocs(favQuery);
+      await Promise.all(favSnapshot.docs.map(d => deleteDoc(d.ref)));
+      
       toast.success('Product deleted');
       loadProducts();
     }

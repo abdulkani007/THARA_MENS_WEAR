@@ -73,6 +73,17 @@ const AccessoriesManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Delete this accessory?')) {
       await deleteDoc(doc(db, 'products', id));
+      
+      // Remove from all users' carts
+      const cartQuery = query(collection(db, 'cart'), where('productId', '==', id));
+      const cartSnapshot = await getDocs(cartQuery);
+      await Promise.all(cartSnapshot.docs.map(d => deleteDoc(d.ref)));
+      
+      // Remove from all users' favorites
+      const favQuery = query(collection(db, 'favorites'), where('productId', '==', id));
+      const favSnapshot = await getDocs(favQuery);
+      await Promise.all(favSnapshot.docs.map(d => deleteDoc(d.ref)));
+      
       toast.success('Accessory deleted');
       loadProducts();
     }
