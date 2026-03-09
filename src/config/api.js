@@ -1,5 +1,6 @@
 // API Base URL Configuration
 export const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://thara-mens-wear.onrender.com';
+export const API_URL = API_BASE_URL; // Alias for simpler usage
 
 // API Endpoints
 export const API_ENDPOINTS = {
