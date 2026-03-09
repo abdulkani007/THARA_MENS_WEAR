@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllImages } from '../../services/imageService';
+import { API_BASE_URL } from '../../config/api';
 import toast from 'react-hot-toast';
 import { FiImage, FiCalendar, FiFile } from 'react-icons/fi';
 
@@ -28,8 +29,6 @@ const ImageGallery = () => {
     img.fileName?.toLowerCase().includes(filter.toLowerCase()) ||
     img.productId?.toLowerCase().includes(filter.toLowerCase())
   );
-
-  const API_URL = 'http://localhost:5000/api';
 
   if (loading) {
     return (
@@ -82,7 +81,7 @@ const ImageGallery = () => {
             }}
           >
             <img
-              src={`${API_URL}/images/${image._id}`}
+              src={`${API_BASE_URL}/api/images/${image._id}`}
               alt={image.productName}
               style={{
                 width: '100%',

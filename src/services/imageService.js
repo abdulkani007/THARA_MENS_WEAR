@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api';
+import { API_ENDPOINTS } from '../config/api';
 
 export const uploadImageToMongoDB = async (file, productId, productName = 'Product', fileName = null) => {
   const formData = new FormData();
@@ -9,7 +8,7 @@ export const uploadImageToMongoDB = async (file, productId, productName = 'Produ
   formData.append('productName', productName);
   formData.append('fileName', fileName || file.name);
 
-  const response = await axios.post(`${API_URL}/upload-image`, formData, {
+  const response = await axios.post(API_ENDPOINTS.UPLOAD_IMAGE, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
 
@@ -19,13 +18,12 @@ export const uploadImageToMongoDB = async (file, productId, productName = 'Produ
 export const deleteImageFromMongoDB = async (imageUrl) => {
   try {
     if (!imageUrl || !imageUrl.includes('/api/images/')) {
-      return; // Skip if not a MongoDB image URL
+      return;
     }
     const imageId = imageUrl.split('/').pop();
-    await axios.delete(`${API_URL}/images/${imageId}`);
+    await axios.delete(API_ENDPOINTS.DELETE_IMAGE(imageId));
   } catch (error) {
     console.error('Error deleting image:', error);
-    // Don't throw error, just log it
   }
 };
 
@@ -41,6 +39,6 @@ export const deleteProductImages = async (imageUrls) => {
 };
 
 export const getAllImages = async () => {
-  const response = await axios.get(`${API_URL}/images`);
+  const response = await axios.get(API_ENDPOINTS.GET_ALL_IMAGES);
   return response.data.images;
 };
