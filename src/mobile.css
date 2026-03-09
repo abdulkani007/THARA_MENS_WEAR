@@ -16,8 +16,40 @@ input, select, textarea {
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Banner fix - full width, proper height */
+  .user-home {
+    padding: 0 !important;
+  }
+
+  /* Banner slider mobile optimization */
+  .user-home > div:first-child,
+  .home-banner-slider {
+    height: 200px !important;
+    margin: 0 0 16px 0 !important;
+    border-radius: 0 !important;
+  }
+
+  /* Banner navigation buttons - smaller on mobile */
+  .banner-nav-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .banner-prev {
+    left: 8px !important;
+  }
+
+  .banner-next {
+    right: 8px !important;
+  }
+
+  /* Shop container spacing */
+  .shop-container {
+    padding: 0 12px 100px !important;
+  }
+
   /* All user pages - consistent padding */
-  .user-home, .collections-page, .accessories-page, .user-kids-page,
+  .collections-page, .accessories-page, .user-kids-page,
   .favorites-page, .cart-page, .orders-page, .profile-page,
   .product-detail, .checkout-page {
     padding: 16px 12px 100px !important;
@@ -133,9 +165,11 @@ input, select, textarea {
     min-height: 48px !important;
   }
 
-  /* Banners */
+  /* Banners - mobile optimized */
   .banner, .hero-slider, .hero-slide {
-    height: 250px !important;
+    height: 200px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
   }
 
   /* Footer */
@@ -146,6 +180,18 @@ input, select, textarea {
 
 /* Small mobile - 1 column */
 @media (max-width: 480px) {
+  /* Banner even smaller on small mobile */
+  .user-home > div:first-child,
+  .home-banner-slider {
+    height: 160px !important;
+  }
+
+  /* Banner dots smaller */
+  .home-banner-slider button[style*="width: 10px"] {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
   .products-grid, .accessories-products-grid,
   .collections-products-grid, .kids-products-grid,
   .favorites-grid {

@@ -37,7 +37,15 @@ const HomeBannerSlider = () => {
   if (banners.length === 0) return null;
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '400px', borderRadius: '0', overflow: 'hidden', marginBottom: '32px', marginTop: '0' }}>
+    <div style={{ 
+      position: 'relative', 
+      width: '100%', 
+      height: '400px', 
+      borderRadius: '0', 
+      overflow: 'hidden', 
+      marginBottom: '32px', 
+      marginTop: '0' 
+    }} className="home-banner-slider">
       {banners.map((banner, index) => (
         <div
           key={banner.id}
@@ -64,6 +72,7 @@ const HomeBannerSlider = () => {
         <>
           <button
             onClick={handlePrev}
+            className="banner-nav-btn banner-prev"
             style={{
               position: 'absolute',
               left: '20px',
@@ -79,7 +88,8 @@ const HomeBannerSlider = () => {
               justifyContent: 'center',
               color: '#fff',
               cursor: 'pointer',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
+              zIndex: 10
             }}
             onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 46, 46, 0.8)'}
             onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)'}
@@ -89,6 +99,7 @@ const HomeBannerSlider = () => {
 
           <button
             onClick={handleNext}
+            className="banner-nav-btn banner-next"
             style={{
               position: 'absolute',
               right: '20px',
@@ -104,7 +115,8 @@ const HomeBannerSlider = () => {
               justifyContent: 'center',
               color: '#fff',
               cursor: 'pointer',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
+              zIndex: 10
             }}
             onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 46, 46, 0.8)'}
             onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)'}
@@ -112,7 +124,7 @@ const HomeBannerSlider = () => {
             <FiChevronRight size={24} />
           </button>
 
-          <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px' }}>
+          <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px', zIndex: 10 }}>
             {banners.map((_, index) => (
               <button
                 key={index}
