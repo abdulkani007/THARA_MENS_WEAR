@@ -25,9 +25,14 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB error:', err));
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
+// Test Route
+app.get('/', (req, res) => {
+  res.send('THARA backend running');
+});
 
 app.post('/api/upload-image', upload.single('image'), async (req, res) => {
   try {
@@ -50,7 +55,7 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
 
     await image.save();
 
-    const baseUrl = process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || 5000}`;
+    const baseUrl = process.env.BASE_URL || 'https://thara-mens-wear.onrender.com';
 
     res.json({
       success: true,
