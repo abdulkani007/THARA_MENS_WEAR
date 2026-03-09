@@ -18,7 +18,9 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
-});
+})
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 const imageSchema = new mongoose.Schema({
   productId: String,
@@ -32,6 +34,11 @@ const Image = mongoose.model('Image', imageSchema);
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+
+// Test Route
+app.get('/', (req, res) => {
+  res.send('THARA backend running');
+});
 
 app.post('/api/upload-image', upload.single('image'), async (req, res) => {
   try {
@@ -57,6 +64,15 @@ app.get('/api/images/:id', async (req, res) => {
     const buffer = Buffer.from(image.data, 'base64');
     res.set('Content-Type', image.contentType);
     res.send(buffer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/images', async (req, res) => {
+  try {
+    const images = await Image.find().select('-data').sort({ createdAt: -1 });
+    res.json({ success: true, images });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
