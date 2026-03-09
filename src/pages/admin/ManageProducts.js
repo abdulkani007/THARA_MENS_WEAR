@@ -121,9 +121,13 @@ const ManageProducts = () => {
         {products.map(product => (
           <div key={product.id} className="card">
             <img
-              src={product.images?.[0] || product.imageURL}
+              src={product.imageURL || product.images?.[0] || '/placeholder-product.png'}
               alt={product.name}
               style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '16px' }}
+              onError={(e) => { 
+                console.error('Image load error for product:', product.name, product.imageURL || product.images?.[0]);
+                e.target.src = '/placeholder-product.png'; 
+              }}
             />
             <h3 style={{ fontSize: '20px', marginBottom: '8px' }}>{product.name}</h3>
             <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px', marginBottom: '8px' }}>

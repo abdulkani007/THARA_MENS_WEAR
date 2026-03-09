@@ -188,9 +188,10 @@ const AccessoriesManagement = () => {
                   >
                     <td style={{ padding: '12px 20px' }}>
                       <img 
-                        src={product.images?.[0] || product.imageURL} 
+                        src={product.imageURL || product.images?.[0] || '/placeholder-product.png'} 
                         alt={product.name}
                         style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+                        onError={(e) => { e.target.src = '/placeholder-product.png'; }}
                       />
                     </td>
                     <td style={{ padding: '12px 20px', fontSize: '14px', fontWeight: '600', color: '#fff' }}>{product.name}</td>
