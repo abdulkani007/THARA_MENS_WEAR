@@ -24,6 +24,7 @@ const Orders = () => {
   useEffect(() => {
     loadOrders();
     loadReturns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadOrders = async () => {

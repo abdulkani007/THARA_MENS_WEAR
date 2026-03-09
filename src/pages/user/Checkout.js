@@ -51,6 +51,7 @@ const Checkout = () => {
 
   useEffect(() => {
     loadSavedAddress();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   const loadSavedAddress = async () => {

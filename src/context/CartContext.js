@@ -21,6 +21,7 @@ export const CartProvider = ({ children }) => {
       setCart([]);
       setFavorites([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   const loadCart = async () => {

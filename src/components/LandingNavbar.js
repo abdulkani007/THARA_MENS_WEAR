@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { FiShoppingCart, FiUser } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -9,7 +9,6 @@ import './LandingNavbar.css';
 const LandingNavbar = () => {
   const { currentUser } = useAuth();
   const { cart } = useCart();
-  const navigate = useNavigate();
 
   return (
     <nav className="landing-navbar">
