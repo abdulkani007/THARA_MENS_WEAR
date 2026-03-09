@@ -1,0 +1,135 @@
+/* Hero Banner Container */
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: 45vh;
+  max-height: 420px;
+  overflow: hidden;
+  margin-bottom: 32px;
+  margin-top: 0;
+}
+
+/* Banner Slide */
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Banner Image */
+.hero-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Navigation Buttons */
+.banner-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.banner-nav-btn:hover {
+  background: rgba(255, 46, 46, 0.8);
+}
+
+.banner-prev {
+  left: 20px;
+}
+
+.banner-next {
+  right: 20px;
+}
+
+/* Indicator Dots */
+.banner-indicators {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.banner-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.banner-dot.active {
+  background: #FF2E2E;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hero-banner {
+    height: 30vh;
+    max-height: 250px;
+    margin-bottom: 16px;
+  }
+
+  .hero-banner img {
+    object-fit: cover;
+  }
+
+  .banner-nav-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .banner-prev {
+    left: 8px;
+  }
+
+  .banner-next {
+    right: 8px;
+  }
+
+  .banner-indicators {
+    bottom: 12px;
+    gap: 6px;
+  }
+
+  .banner-dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .hero-banner {
+    height: 25vh;
+    max-height: 200px;
+  }
+}

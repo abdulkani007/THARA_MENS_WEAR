@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import './HomeBannerSlider.css';
 
 const HomeBannerSlider = () => {
   const [banners, setBanners] = useState([]);
@@ -37,107 +38,29 @@ const HomeBannerSlider = () => {
   if (banners.length === 0) return null;
 
   return (
-    <div style={{ 
-      position: 'relative', 
-      width: '100%', 
-      height: '400px', 
-      borderRadius: '0', 
-      overflow: 'hidden', 
-      marginBottom: '32px', 
-      marginTop: '0' 
-    }} className="home-banner-slider">
+    <div className="hero-banner">
       {banners.map((banner, index) => (
-        <div
-          key={banner.id}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            opacity: index === currentIndex ? 1 : 0,
-            transition: 'opacity 0.6s ease',
-            pointerEvents: index === currentIndex ? 'auto' : 'none'
-          }}
-        >
-          <img
-            src={banner.imageURL}
-            alt="Banner"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+        <div key={banner.id} className={`hero-slide ${index === currentIndex ? 'active' : ''}`}>
+          <img src={banner.imageURL} alt="Banner" />
         </div>
       ))}
 
       {banners.length > 1 && (
         <>
-          <button
-            onClick={handlePrev}
-            className="banner-nav-btn banner-prev"
-            style={{
-              position: 'absolute',
-              left: '20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              background: 'rgba(0, 0, 0, 0.5)',
-              border: 'none',
-              borderRadius: '50%',
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              zIndex: 10
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 46, 46, 0.8)'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)'}
-          >
+          <button onClick={handlePrev} className="banner-nav-btn banner-prev">
             <FiChevronLeft size={24} />
           </button>
 
-          <button
-            onClick={handleNext}
-            className="banner-nav-btn banner-next"
-            style={{
-              position: 'absolute',
-              right: '20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              background: 'rgba(0, 0, 0, 0.5)',
-              border: 'none',
-              borderRadius: '50%',
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              zIndex: 10
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 46, 46, 0.8)'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)'}
-          >
+          <button onClick={handleNext} className="banner-nav-btn banner-next">
             <FiChevronRight size={24} />
           </button>
 
-          <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px', zIndex: 10 }}>
+          <div className="banner-indicators">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                style={{
-                  width: '10px',
-                  height: '10px',
-                  borderRadius: '50%',
-                  border: 'none',
-                  background: index === currentIndex ? '#FF2E2E' : 'rgba(255, 255, 255, 0.5)',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
+                className={`banner-dot ${index === currentIndex ? 'active' : ''}`}
               />
             ))}
           </div>
