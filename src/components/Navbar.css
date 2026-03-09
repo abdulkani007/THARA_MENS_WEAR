@@ -169,40 +169,72 @@
 }
 
 @media (max-width: 768px) {
+  .navbar {
+    padding: 12px 0;
+  }
+
+  .navbar-container {
+    padding: 0 16px;
+  }
+
   .navbar-logo img {
     height: 35px;
   }
 
   .hamburger {
     display: flex;
+    z-index: 1002;
+    position: relative;
   }
 
   .navbar-menu {
     position: fixed;
-    top: 67px;
-    left: 0;
+    top: 0;
     right: 0;
-    background: #000000;
+    bottom: 0;
+    width: 280px;
+    background: #0a0a0a;
     flex-direction: column;
     gap: 0;
-    padding: 20px;
-    border-bottom: 1px solid #1F2833;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    max-height: calc(100vh - 67px);
+    padding: 80px 20px 20px;
+    border-left: 1px solid #1F2833;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
+    z-index: 1001;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
   }
 
   .navbar-menu.active {
     transform: translateX(0);
   }
 
+  .navbar-menu::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 280px;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+
+  .navbar-menu.active::before {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .navbar-link {
     width: 100%;
     padding: 16px 20px;
-    font-size: 16px;
+    font-size: 15px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 0;
+    border-radius: 8px;
+    margin-bottom: 4px;
   }
 
   .navbar-link::before {
@@ -210,9 +242,16 @@
   }
 
   .navbar-link:hover {
-    background: rgba(255, 46, 46, 0.1);
-    transform: translateX(8px);
+    background: rgba(255, 46, 46, 0.15);
+    transform: translateX(0);
     border-left: 3px solid #FF2E2E;
+    padding-left: 17px;
+  }
+
+  .navbar-link.active {
+    background: rgba(255, 46, 46, 0.2);
+    border-left: 3px solid #FF2E2E;
+    padding-left: 17px;
   }
 
   .navbar-link:last-child {
@@ -221,6 +260,49 @@
 
   .btn-primary {
     width: 100%;
-    margin-top: 12px;
+    margin-top: 16px;
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+
+  .cart-badge {
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* Navbar overlay for mobile */
+.navbar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Navbar overlay for mobile */
+.navbar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

@@ -31,7 +31,16 @@ const Navbar = () => {
   const closeMenu = () => setMobileMenuOpen(false);
 
   return (
-    <nav className="navbar">
+    <>
+      {/* Mobile menu overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="navbar-overlay" 
+          onClick={closeMenu}
+        />
+      )}
+      
+      <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo" onClick={closeMenu}>
           <img src={logo} alt="THARA Men's Wear" />
@@ -81,6 +90,7 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
+    </>
   );
 };
 
