@@ -2,8 +2,9 @@ const nodemailer = require('nodemailer');
 
 // Verify email configuration on startup
 if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-  console.warn('⚠️  EMAIL_USER or EMAIL_PASS not configured in .env file');
+  console.warn('⚠️  EMAIL_USER or EMAIL_PASS not configured');
   console.warn('⚠️  Email notifications will not work until configured');
+  console.warn('⚠️  Set these in Render Dashboard > Environment Variables');
 }
 
 // Create transporter with Gmail SMTP - Using port 587 for Render compatibility
@@ -17,18 +18,29 @@ const transporter = nodemailer.createTransport({
   },
   tls: {
     rejectUnauthorized: false // Allow self-signed certificates on some platforms
-  }
+  },
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 10000,
+  socketTimeout: 10000
 });
 
-// Verify transporter configuration
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ Email transporter verification failed:', error.message);
-    console.error('💡 Tip: Make sure EMAIL_USER and EMAIL_PASS are set correctly');
-  } else {
-    console.log('✅ Email service is ready to send emails (Port 587)');
-  }
-});
+// Verify transporter configuration (non-blocking, async)
+if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+  // Run verification asynchronously without blocking startup
+  setImmediate(() => {
+    transporter.verify((error, success) => {
+      if (error) {
+        console.error('❌ Email transporter verification failed:', error.message);
+        console.error('💡 This won\'t stop the server, but emails may not work');
+        console.error('💡 Check: EMAIL_USER and EMAIL_PASS in Render Environment Variables');
+      } else {
+        console.log('✅ Email service is ready to send emails (Port 587)');
+      }
+    });
+  });
+} else {
+  console.log('⏭️  Email verification skipped (credentials not configured)');
+}
 
 // Reusable email sending function
 const sendEmail = async (to, subject, message) => {
