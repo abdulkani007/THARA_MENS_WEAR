@@ -27,6 +27,21 @@ const Register = () => {
         createdAt: new Date()
       });
 
+      // Send welcome email
+      try {
+        const API_URL = process.env.REACT_APP_API_URL || 'https://thara-mens-wear.onrender.com';
+        await fetch(`${API_URL}/api/send-registration-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            name: email.split('@')[0]
+          })
+        });
+      } catch (emailError) {
+        console.error('Welcome email failed:', emailError);
+      }
+
       toast.success('Registration successful!');
       
       setTimeout(() => {

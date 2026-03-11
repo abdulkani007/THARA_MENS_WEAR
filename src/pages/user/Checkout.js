@@ -237,6 +237,26 @@ const Checkout = () => {
 
       await addDoc(collection(db, 'orders'), orderData);
 
+      // Send order confirmation email
+      try {
+        const API_URL = process.env.REACT_APP_API_URL || 'https://thara-mens-wear.onrender.com';
+        await fetch(`${API_URL}/api/send-order-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: currentUser.email,
+            orderId: 'ORD' + Date.now(),
+            orderTotal: totalPrice,
+            items: cart.map(item => ({
+              name: item.product.name,
+              quantity: item.quantity
+            }))
+          })
+        });
+      } catch (emailError) {
+        console.error('Email notification failed:', emailError);
+      }
+
       await clearCart();
       toast.success('Order placed successfully!');
       navigate('/user/orders');
