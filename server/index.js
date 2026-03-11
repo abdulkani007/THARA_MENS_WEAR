@@ -5,6 +5,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const Image = require('./models/Image');
+const { sendEmail } = require('./services/emailService');
 
 const app = express();
 
@@ -116,6 +117,92 @@ app.get('/api/images', async (req, res) => {
     res.json({ success: true, images });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Email notification endpoint for user registration
+app.post('/api/send-registration-email', async (req, res) => {
+  try {
+    const { email, name } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const subject = 'Welcome to Thara Men\'s Wear';
+    const message = `
+      <h2 style="color: #FF2E2E;">Welcome ${name || 'Valued Customer'}!</h2>
+      <p style="font-size: 16px; line-height: 1.6;">
+        Your account has been successfully created.
+      </p>
+      <p style="font-size: 16px; line-height: 1.6;">
+        Thank you for joining Thara Men's Wear. We're excited to have you with us!
+      </p>
+      <p style="font-size: 16px; line-height: 1.6;">
+        Start exploring our premium collection of men's fashion.
+      </p>
+    `;
+
+    const result = await sendEmail(email, subject, message);
+
+    if (result.success) {
+      res.json({ success: true, message: 'Registration email sent successfully' });
+    } else {
+      res.status(500).json({ success: false, error: 'Failed to send email' });
+    }
+  } catch (error) {
+    console.error('Registration email error:', error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Email notification endpoint for order placement
+app.post('/api/send-order-email', async (req, res) => {
+  try {
+    const { email, orderId, orderTotal, items } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const subject = 'Order Confirmation - Thara Men\'s Wear';
+    const itemsList = items && items.length > 0 
+      ? items.map(item => `<li>${item.name || 'Product'} - Quantity: ${item.quantity || 1}</li>`).join('')
+      : '<li>Your order items</li>';
+
+    const message = `
+      <h2 style="color: #FF2E2E;">Order Confirmed!</h2>
+      <p style="font-size: 16px; line-height: 1.6;">
+        Your order has been placed successfully.
+      </p>
+      ${orderId ? `<p style="font-size: 16px;"><strong>Order ID:</strong> ${orderId}</p>` : ''}
+      ${orderTotal ? `<p style="font-size: 16px;"><strong>Total Amount:</strong> ₹${orderTotal}</p>` : ''}
+      ${items && items.length > 0 ? `
+        <div style="margin: 20px 0;">
+          <h3 style="color: #66FCF1;">Order Items:</h3>
+          <ul style="font-size: 14px; line-height: 1.8;">
+            ${itemsList}
+          </ul>
+        </div>
+      ` : ''}
+      <p style="font-size: 16px; line-height: 1.6;">
+        We'll notify you once your order is shipped.
+      </p>
+      <p style="font-size: 16px; line-height: 1.6;">
+        Thank you for shopping with Thara Men's Wear!
+      </p>
+    `;
+
+    const result = await sendEmail(email, subject, message);
+
+    if (result.success) {
+      res.json({ success: true, message: 'Order confirmation email sent successfully' });
+    } else {
+      res.status(500).json({ success: false, error: 'Failed to send email' });
+    }
+  } catch (error) {
+    console.error('Order email error:', error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
