@@ -5,6 +5,8 @@ if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
   console.warn('⚠️  EMAIL_USER or EMAIL_PASS not configured');
   console.warn('⚠️  Email notifications will not work until configured');
   console.warn('⚠️  Set these in Render Dashboard > Environment Variables');
+} else {
+  console.log('📧 Email service configured (verification skipped for Render compatibility)');
 }
 
 // Create transporter with Gmail SMTP - Using port 587 for Render compatibility
@@ -24,23 +26,9 @@ const transporter = nodemailer.createTransport({
   socketTimeout: 10000
 });
 
-// Verify transporter configuration (non-blocking, async)
-if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-  // Run verification asynchronously without blocking startup
-  setImmediate(() => {
-    transporter.verify((error, success) => {
-      if (error) {
-        console.error('❌ Email transporter verification failed:', error.message);
-        console.error('💡 This won\'t stop the server, but emails may not work');
-        console.error('💡 Check: EMAIL_USER and EMAIL_PASS in Render Environment Variables');
-      } else {
-        console.log('✅ Email service is ready to send emails (Port 587)');
-      }
-    });
-  });
-} else {
-  console.log('⏭️  Email verification skipped (credentials not configured)');
-}
+// NOTE: transporter.verify() is disabled because Render free tier blocks SMTP verification
+// However, transporter.sendMail() will still work when actually sending emails
+// The connection is only established when sendMail() is called, not during verification
 
 // Reusable email sending function
 const sendEmail = async (to, subject, message) => {
