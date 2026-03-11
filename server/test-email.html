@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Test - THARA Backend</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0B0C10 0%, #1F2833 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: #111111;
+            border: 2px solid #1F2833;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            color: #FF2E2E;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #66FCF1;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            color: #C5C6C7;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #0B0C10;
+            border: 1px solid #1F2833;
+            border-radius: 6px;
+            color: #FFFFFF;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #66FCF1;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-test {
+            background: #66FCF1;
+            color: #0B0C10;
+        }
+        .btn-test:hover {
+            background: #45DAC8;
+            transform: translateY(-2px);
+        }
+        .btn-register {
+            background: #FF2E2E;
+            color: #FFFFFF;
+        }
+        .btn-register:hover {
+            background: #E01E1E;
+            transform: translateY(-2px);
+        }
+        .btn-order {
+            background: #C5C6C7;
+            color: #0B0C10;
+        }
+        .btn-order:hover {
+            background: #A5A6A7;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+        .result.success {
+            background: rgba(102, 252, 241, 0.1);
+            border: 1px solid #66FCF1;
+            color: #66FCF1;
+        }
+        .result.error {
+            background: rgba(255, 46, 46, 0.1);
+            border: 1px solid #FF2E2E;
+            color: #FF2E2E;
+        }
+        .loading {
+            text-align: center;
+            color: #66FCF1;
+            margin-top: 20px;
+            display: none;
+        }
+        .info {
+            background: rgba(102, 252, 241, 0.05);
+            border: 1px solid #1F2833;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #C5C6C7;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .info strong {
+            color: #66FCF1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 Email Test</h1>
+        <p class="subtitle">THARA Backend Email Service</p>
+
+        <div class="info">
+            <strong>Instructions:</strong><br>
+            1. Enter your email address<br>
+            2. Click any button to test email functionality<br>
+            3. Check your inbox (and spam folder)<br>
+            4. Check server console for detailed logs
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="your@email.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="name">Name (optional)</label>
+            <input type="text" id="name" placeholder="Your Name">
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-test" onclick="sendTestEmail()">🧪 Test Email</button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-register" onclick="sendRegistrationEmail()">👤 Registration</button>
+            <button class="btn-order" onclick="sendOrderEmail()">🛒 Order</button>
+        </div>
+
+        <div class="loading" id="loading">⏳ Sending email...</div>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+        }
+
+        function showResult(message, isSuccess) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = 'result ' + (isSuccess ? 'success' : 'error');
+            resultDiv.style.display = 'block';
+        }
+
+        async function sendTestEmail() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch(`${API_URL}/api/test-email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showResult(`✅ ${data.message}\nMessage ID: ${data.messageId}`, true);
+                } else {
+                    showResult(`❌ Failed: ${data.error}\n${data.hint || ''}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}\nMake sure the server is running on port 5000`, false);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function sendRegistrationEmail() {
+            const email = document.getElementById('email').value;
+            const name = document.getElementById('name').value;
+            
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch(`${API_URL}/api/send-registration-email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, name })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showResult(`✅ Registration email sent successfully to ${email}!`, true);
+                } else {
+                    showResult(`❌ Failed: ${data.error}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, false);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function sendOrderEmail() {
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch(`${API_URL}/api/send-order-email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email,
+                        orderId: 'TEST-' + Date.now(),
+                        orderTotal: 2999,
+                        items: [
+                            { name: 'Premium Shirt', quantity: 2 },
+                            { name: 'Casual Jeans', quantity: 1 }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showResult(`✅ Order confirmation email sent successfully to ${email}!`, true);
+                } else {
+                    showResult(`❌ Failed: ${data.error}`, false);
+                }
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, false);
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+</html>

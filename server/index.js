@@ -156,6 +156,54 @@ app.post('/api/send-registration-email', async (req, res) => {
   }
 });
 
+// Test email endpoint - for testing email functionality
+app.post('/api/test-email', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const subject = 'Test Email - Thara Men\'s Wear';
+    const message = `
+      <h2 style="color: #FF2E2E;">Test Email</h2>
+      <p style="font-size: 16px; line-height: 1.6;">
+        This is a test email from Thara Men's Wear backend.
+      </p>
+      <p style="font-size: 16px; line-height: 1.6;">
+        If you received this, your email configuration is working correctly! ✅
+      </p>
+      <p style="font-size: 14px; color: #66FCF1;">
+        Sent at: ${new Date().toLocaleString()}
+      </p>
+    `;
+
+    console.log('🔄 Attempting to send test email to:', email);
+    const result = await sendEmail(email, subject, message);
+
+    if (result.success) {
+      console.log('✅ Test email sent successfully!');
+      res.json({ 
+        success: true, 
+        message: 'Test email sent successfully! Check your inbox.',
+        messageId: result.messageId,
+        sentTo: email
+      });
+    } else {
+      console.error('❌ Test email failed:', result.error);
+      res.status(500).json({ 
+        success: false, 
+        error: result.error,
+        hint: 'Check server console for detailed error logs'
+      });
+    }
+  } catch (error) {
+    console.error('❌ Test email error:', error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Email notification endpoint for order placement
 app.post('/api/send-order-email', async (req, res) => {
   try {

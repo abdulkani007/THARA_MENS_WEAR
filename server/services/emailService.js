@@ -6,12 +6,17 @@ if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
   console.warn('⚠️  Email notifications will not work until configured');
 }
 
-// Create transporter with Gmail SMTP
+// Create transporter with Gmail SMTP - Using port 587 for Render compatibility
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // Use STARTTLS
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
+  },
+  tls: {
+    rejectUnauthorized: false // Allow self-signed certificates on some platforms
   }
 });
 
@@ -19,8 +24,9 @@ const transporter = nodemailer.createTransport({
 transporter.verify((error, success) => {
   if (error) {
     console.error('❌ Email transporter verification failed:', error.message);
+    console.error('💡 Tip: Make sure EMAIL_USER and EMAIL_PASS are set correctly');
   } else {
-    console.log('✅ Email service is ready to send emails');
+    console.log('✅ Email service is ready to send emails (Port 587)');
   }
 });
 
@@ -52,10 +58,19 @@ const sendEmail = async (to, subject, message) => {
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('❌ Email sending failed:', error.message);
+    console.error('❌ Error code:', error.code);
+    
+    // Specific error handling
     if (error.code === 'EAUTH') {
-      console.error('❌ Authentication failed - Check EMAIL_USER and EMAIL_PASS in .env');
+      console.error('❌ Authentication failed - Check EMAIL_USER and EMAIL_PASS');
+    } else if (error.code === 'ETIMEDOUT' || error.code === 'ECONNECTION') {
+      console.error('❌ Connection timeout - Check network/firewall settings');
+    } else if (error.code === 'ENETUNREACH') {
+      console.error('❌ Network unreachable - Port 587 may be blocked');
     }
-    return { success: false, error: error.message };
+    
+    // Return error but don't crash the server
+    return { success: false, error: error.message, code: error.code };
   }
 };
 
