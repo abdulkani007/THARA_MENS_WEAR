@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { db, auth } from '../../firebase';
-import { FiHome, FiPackage, FiPlus, FiShoppingCart, FiUsers, FiTag, FiUser, FiLogOut, FiMenu, FiX, FiGrid, FiAlertTriangle, FiSmile, FiArchive, FiWatch, FiImage, FiStar, FiRotateCcw } from 'react-icons/fi';
+import { FiHome, FiPackage, FiPlus, FiShoppingCart, FiUsers, FiTag, FiUser, FiLogOut, FiMenu, FiX, FiGrid, FiAlertTriangle, FiSmile, FiArchive, FiWatch, FiImage, FiStar, FiRotateCcw, FiBarChart2 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import logo from '../../assets/thara-logo.jpeg';
 
@@ -61,6 +61,7 @@ const AdminDashboard = () => {
 
   const menuItems = [
     { path: '/admin', icon: FiHome, label: 'Dashboard', exact: true },
+    { path: '/admin/analytics', icon: FiBarChart2, label: 'Analytics' },
     { path: '/admin/add-product', icon: FiPlus, label: 'Add Product' },
     { path: '/admin/products', icon: FiPackage, label: 'Manage Products' },
     { path: '/admin/categories', icon: FiGrid, label: 'Categories' },

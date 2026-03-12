@@ -13,6 +13,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
+import Analytics from './pages/admin/Analytics';
 import AddProduct from './pages/admin/AddProduct';
 import ManageProducts from './pages/admin/ManageProducts';
 import AdminOrders from './pages/admin/AdminOrders';
@@ -82,6 +83,7 @@ function App() {
                 <AdminDashboard />
               </ProtectedRoute>
             }>
+              <Route path="analytics" element={<Analytics />} />
               <Route path="add-product" element={<AddProduct />} />
               <Route path="products" element={<ManageProducts />} />
               <Route path="categories" element={<Categories />} />

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -24,6 +25,13 @@ export const AuthProvider = ({ children }) => {
             // If document doesn't exist, set role based on email
             const role = user.email === 'thara@gmail.com' ? 'admin' : 'user';
             setUserRole(role);
+          }
+          
+          // Track login
+          try {
+            await axios.post('http://localhost:5000/api/admin/track-login');
+          } catch (error) {
+            console.error('Error tracking login:', error);
           }
         } catch (error) {
           console.error('Error fetching user role:', error);

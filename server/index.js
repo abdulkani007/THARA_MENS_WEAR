@@ -5,6 +5,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const Image = require('./models/Image');
+const LoginStats = require('./models/LoginStats');
 const { sendEmail } = require('./services/emailService');
 
 const app = express();
@@ -201,6 +202,71 @@ app.post('/api/test-email', async (req, res) => {
   } catch (error) {
     console.error('❌ Test email error:', error.message);
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Login stats endpoints
+app.post('/api/admin/track-login', async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let stats = await LoginStats.findOne({ date: today });
+    
+    if (stats) {
+      stats.count += 1;
+      await stats.save();
+    } else {
+      stats = new LoginStats({ date: today, count: 1 });
+      await stats.save();
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/admin/login-stats', async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const todayStats = await LoginStats.findOne({ date: today });
+    const yesterdayStats = await LoginStats.findOne({ date: yesterday });
+
+    res.json({
+      todayLogins: todayStats?.count || 0,
+      yesterdayLogins: yesterdayStats?.count || 0
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/admin/login-stats/weekly', async (req, res) => {
+  try {
+    const last7Days = [];
+    
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      date.setHours(0, 0, 0, 0);
+      
+      const stats = await LoginStats.findOne({ date });
+      
+      last7Days.push({
+        date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        count: stats?.count || 0
+      });
+    }
+
+    res.json({ data: last7Days });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
