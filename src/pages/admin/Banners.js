@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { uploadImageToMongoDB, deleteImageFromMongoDB } from '../../services/imageService';
 import { FiPlus, FiTrash2, FiToggleLeft, FiToggleRight, FiImage } from 'react-icons/fi';
@@ -19,14 +19,44 @@ const Banners = () => {
     imageURL: '',
     useURL: false
   });
+  const [announcement, setAnnouncement] = useState({
+    enabled: false,
+    message: ''
+  });
+  const [savingAnnouncement, setSavingAnnouncement] = useState(false);
 
   useEffect(() => {
     loadBanners();
+    loadAnnouncement();
   }, []);
 
   const loadBanners = async () => {
     const snapshot = await getDocs(collection(db, 'banners'));
     setBanners(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  };
+
+  const loadAnnouncement = async () => {
+    const docRef = doc(db, 'announcement', 'config');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      setAnnouncement(docSnap.data());
+    }
+  };
+
+  const saveAnnouncement = async () => {
+    setSavingAnnouncement(true);
+    try {
+      await setDoc(doc(db, 'announcement', 'config'), {
+        enabled: announcement.enabled,
+        message: announcement.message,
+        updatedAt: new Date()
+      });
+      toast.success('Announcement saved');
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setSavingAnnouncement(false);
+    }
   };
 
   const handleImageChange = (e) => {
@@ -136,6 +166,72 @@ const Banners = () => {
           }}
         >
           <FiPlus size={18} /> Create Banner
+        </button>
+      </div>
+
+      <div style={{ background: '#1a1a1a', borderRadius: '12px', padding: '24px', marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>Announcement Banner</h2>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+          <button
+            onClick={() => setAnnouncement({ ...announcement, enabled: !announcement.enabled })}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 16px',
+              background: announcement.enabled ? 'rgba(34, 197, 94, 0.15)' : 'rgba(156, 163, 175, 0.15)',
+              border: `1px solid ${announcement.enabled ? '#22c55e' : '#9ca3af'}`,
+              borderRadius: '8px',
+              color: announcement.enabled ? '#22c55e' : '#9ca3af',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600'
+            }}
+          >
+            {announcement.enabled ? <FiToggleRight size={20} /> : <FiToggleLeft size={20} />}
+            Enable Announcement Banner
+          </button>
+          <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px' }}>
+            {announcement.enabled ? 'Visible on landing page' : 'Hidden from landing page'}
+          </span>
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>Message:</label>
+          <input
+            type="text"
+            placeholder="e.g., 🔥 THARA MEN'S WEAR – Free Shipping | New Collection | 20% OFF Today 🔥"
+            value={announcement.message}
+            onChange={(e) => setAnnouncement({ ...announcement, message: e.target.value })}
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              background: '#0f0f0f',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '8px',
+              color: '#fff',
+              fontSize: '14px'
+            }}
+          />
+        </div>
+
+        <button
+          onClick={saveAnnouncement}
+          disabled={savingAnnouncement}
+          style={{
+            padding: '12px 24px',
+            background: '#ff2e2e',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#fff',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            opacity: savingAnnouncement ? 0.6 : 1
+          }}
+        >
+          {savingAnnouncement ? 'Saving...' : 'Save Announcement'}
         </button>
       </div>
 

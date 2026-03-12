@@ -1,5 +1,6 @@
 import React from 'react';
 import LandingNavbar from '../components/LandingNavbar';
+import AnnouncementBanner from '../components/AnnouncementBanner';
 import HeroSlider from '../components/HeroSlider';
 import CategorySection from '../components/CategorySection';
 import TrendingSection from '../components/TrendingSection';
@@ -11,6 +12,7 @@ const Landing = () => {
   return (
     <div>
       <LandingNavbar />
+      <AnnouncementBanner />
       <HeroSlider />
       <CategorySection />
       <TrendingSection />
