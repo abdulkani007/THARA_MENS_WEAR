@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, updateDoc, doc, addDoc, deleteDoc, serverTimestamp, increment } from 'firebase/firestore';
 import { db } from '../../firebase';
 import toast from 'react-hot-toast';
-import { FiUser, FiMail, FiPhone, FiMapPin, FiPackage, FiEye, FiX } from 'react-icons/fi';
+import { FiUser, FiMail, FiPhone, FiMapPin, FiPackage, FiEye, FiX, FiSearch } from 'react-icons/fi';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -10,6 +10,7 @@ const AdminOrders = () => {
   const [filterPeriod, setFilterPeriod] = useState('all');
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     loadOrders();
@@ -102,84 +103,179 @@ const AdminOrders = () => {
     const yesterdayStart = new Date(todayStart);
     yesterdayStart.setDate(yesterdayStart.getDate() - 1);
     
+    let filtered = orders;
+    
+    // Apply time period filter
     if (filterPeriod === 'today') {
-      return orders.filter(order => {
+      filtered = orders.filter(order => {
         const orderDate = order.createdAt?.toDate();
         return orderDate >= todayStart;
       });
     } else if (filterPeriod === 'yesterday') {
-      return orders.filter(order => {
+      filtered = orders.filter(order => {
         const orderDate = order.createdAt?.toDate();
         return orderDate >= yesterdayStart && orderDate < todayStart;
       });
     }
-    return orders;
+    
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(order => {
+        // Search by Order ID
+        const orderId = order.id.toLowerCase();
+        if (orderId.includes(query)) return true;
+        
+        // Search by Customer Name
+        const customerName = (order.userName || order.userAddress?.name || '').toLowerCase();
+        if (customerName.includes(query)) return true;
+        
+        // Search by Email
+        const email = (order.userEmail || '').toLowerCase();
+        if (email.includes(query)) return true;
+        
+        // Search by Phone
+        const phone = (order.userAddress?.phone || '').toLowerCase();
+        if (phone.includes(query)) return true;
+        
+        return false;
+      });
+    }
+    
+    return filtered;
   };
 
   const filteredOrders = getFilteredOrders();
 
   return (
     <div className="page-transition">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h1 style={{ fontSize: '36px' }}>Orders Management</h1>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button
-            onClick={() => setFilterPeriod('all')}
+      </div>
+
+      {/* Search Bar */}
+      <div style={{ marginBottom: '24px' }}>
+        <div style={{ position: 'relative', maxWidth: '600px' }}>
+          <FiSearch style={{ 
+            position: 'absolute', 
+            left: '16px', 
+            top: '50%', 
+            transform: 'translateY(-50%)', 
+            color: 'rgba(255, 255, 255, 0.4)',
+            fontSize: '18px',
+            pointerEvents: 'none'
+          }} />
+          <input
+            type="text"
+            placeholder="Search by Order ID, Customer Name, Email, or Phone..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             style={{
-              padding: '10px 20px',
-              background: filterPeriod === 'all' ? 'rgba(255, 46, 46, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: filterPeriod === 'all' ? '1px solid rgba(255, 46, 46, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '8px',
-              color: filterPeriod === 'all' ? '#ff2e2e' : '#fff',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '600'
+              width: '100%',
+              padding: '14px 16px 14px 48px',
+              background: '#1a1a1a',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '10px',
+              color: '#fff',
+              fontSize: '15px',
+              transition: 'all 0.3s ease',
+              outline: 'none'
             }}
-          >
-            All Orders ({orders.length})
-          </button>
-          <button
-            onClick={() => setFilterPeriod('today')}
-            style={{
-              padding: '10px 20px',
-              background: filterPeriod === 'today' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: filterPeriod === 'today' ? '1px solid rgba(34, 197, 94, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '8px',
-              color: filterPeriod === 'today' ? '#22c55e' : '#fff',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '600'
-            }}
-          >
-            Today ({getFilteredOrders().filter(o => {
-              const now = new Date();
-              const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-              return o.createdAt?.toDate() >= todayStart;
-            }).length})
-          </button>
-          <button
-            onClick={() => setFilterPeriod('yesterday')}
-            style={{
-              padding: '10px 20px',
-              background: filterPeriod === 'yesterday' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: filterPeriod === 'yesterday' ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '8px',
-              color: filterPeriod === 'yesterday' ? '#f59e0b' : '#fff',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '600'
-            }}
-          >
-            Yesterday ({getFilteredOrders().filter(o => {
-              const now = new Date();
-              const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-              const yesterdayStart = new Date(todayStart);
-              yesterdayStart.setDate(yesterdayStart.getDate() - 1);
-              const orderDate = o.createdAt?.toDate();
-              return orderDate >= yesterdayStart && orderDate < todayStart;
-            }).length})
-          </button>
+            onFocus={(e) => e.target.style.borderColor = '#ff2e2e'}
+            onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 46, 46, 0.3)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+            >
+              <FiX size={14} />
+            </button>
+          )}
         </div>
+        {searchQuery && (
+          <p style={{ marginTop: '8px', fontSize: '14px', color: 'rgba(255, 255, 255, 0.6)' }}>
+            Found {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''} matching "{searchQuery}"
+          </p>
+        )}
+      </div>
+
+      {/* Filter Buttons */}
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '32px', flexWrap: 'wrap' }}>
+        <button
+          onClick={() => setFilterPeriod('all')}
+          style={{
+            padding: '10px 20px',
+            background: filterPeriod === 'all' ? 'rgba(255, 46, 46, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+            border: filterPeriod === 'all' ? '1px solid rgba(255, 46, 46, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            color: filterPeriod === 'all' ? '#ff2e2e' : '#fff',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '600'
+          }}
+        >
+          All Orders ({orders.length})
+        </button>
+        <button
+          onClick={() => setFilterPeriod('today')}
+          style={{
+            padding: '10px 20px',
+            background: filterPeriod === 'today' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+            border: filterPeriod === 'today' ? '1px solid rgba(34, 197, 94, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            color: filterPeriod === 'today' ? '#22c55e' : '#fff',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '600'
+          }}
+        >
+          Today ({orders.filter(o => {
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            return o.createdAt?.toDate() >= todayStart;
+          }).length})
+        </button>
+        <button
+          onClick={() => setFilterPeriod('yesterday')}
+          style={{
+            padding: '10px 20px',
+            background: filterPeriod === 'yesterday' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+            border: filterPeriod === 'yesterday' ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            color: filterPeriod === 'yesterday' ? '#f59e0b' : '#fff',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '600'
+          }}
+        >
+          Yesterday ({orders.filter(o => {
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterdayStart = new Date(todayStart);
+            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+            const orderDate = o.createdAt?.toDate();
+            return orderDate >= yesterdayStart && orderDate < todayStart;
+          }).length})
+        </button>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
