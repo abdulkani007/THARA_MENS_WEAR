@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, deleteDoc, doc, updateDoc, query, where, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, query, where, orderBy, limit } from 'firebase/firestore';
 import { db } from '../../firebase';
 import toast from 'react-hot-toast';
-import { FiTrash2, FiSearch, FiShoppingBag, FiClock, FiLock, FiUnlock, FiX, FiEye } from 'react-icons/fi';
+import { FiTrash2, FiSearch, FiShoppingBag, FiClock, FiLock, FiUnlock, FiX } from 'react-icons/fi';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
