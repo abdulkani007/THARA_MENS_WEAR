@@ -235,7 +235,7 @@ const Checkout = () => {
         createdAt: new Date()
       };
 
-      await addDoc(collection(db, 'orders'), orderData);
+      const orderDoc = await addDoc(collection(db, 'orders'), orderData);
 
       // Send order confirmation email
       try {
@@ -259,7 +259,18 @@ const Checkout = () => {
 
       await clearCart();
       toast.success('Order placed successfully!');
-      navigate('/user/orders');
+      
+      // Navigate to order success page with order data
+      navigate('/user/order-success', {
+        state: {
+          orderData: {
+            orderId: orderDoc.id,
+            totalPrice: totalPrice.toFixed(2),
+            couponCode: appliedCoupon ? appliedCoupon.code : null,
+            discount: discount.toFixed(2)
+          }
+        }
+      });
     } catch (error) {
       toast.error('Failed to place order');
     } finally {

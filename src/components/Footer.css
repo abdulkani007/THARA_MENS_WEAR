@@ -1,5 +1,5 @@
 .footer {
-  background: #0B0C10;
+  background-color: #000000;
   border-top: 2px solid #1F2833;
   margin-top: 60px;
   padding: 50px 20px 20px;
@@ -60,6 +60,12 @@
   border: 1px solid #1F2833;
   width: 100%;
   max-width: 400px;
+  transition: all 0.3s ease;
+}
+
+.footer-section:hover {
+  border-color: rgba(255, 46, 46, 0.3);
+  background: rgba(17, 17, 17, 0.8);
 }
 
 .footer-icon {
@@ -131,6 +137,28 @@
   color: #C5C6C7;
   margin: 0;
   font-weight: 500;
+}
+
+/* Footer link hover effects */
+.footer a {
+  color: #C5C6C7;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.footer a:hover {
+  color: #FF2E2E;
+  text-decoration: none;
+}
+
+/* Footer text links */
+.footer-section p a {
+  color: #C5C6C7;
+  transition: color 0.3s ease;
+}
+
+.footer-section p a:hover {
+  color: #FF2E2E;
 }
 
 @media (min-width: 768px) {

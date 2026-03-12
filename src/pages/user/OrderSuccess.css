@@ -1,0 +1,317 @@
+.order-success-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0B0C10 0%, #1F2833 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.success-container {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Success Icon Animation */
+.success-icon-container {
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-circle {
+  width: 120px;
+  height: 120px;
+  position: relative;
+}
+
+.success-checkmark {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 20px rgba(102, 252, 241, 0.3));
+}
+
+/* Success Content */
+.success-content {
+  color: #ffffff;
+}
+
+.success-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #FF2E2E, #FF6B6B);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(255, 46, 46, 0.3);
+}
+
+.success-message {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+/* Order Details */
+.order-details {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.order-id, .order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.order-id:last-child, .order-total:last-child {
+  margin-bottom: 0;
+}
+
+.order-id-label, .order-total-label {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.order-id-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #66FCF1;
+  font-family: 'Courier New', monospace;
+  background: rgba(102, 252, 241, 0.1);
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(102, 252, 241, 0.3);
+}
+
+.order-total-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #FF2E2E;
+}
+
+.confirmation-note {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 40px;
+  font-style: italic;
+}
+
+/* Action Buttons */
+.success-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.track-order-btn, .continue-shopping-btn {
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.track-order-btn {
+  background: linear-gradient(135deg, #FF2E2E, #FF4444);
+  color: #ffffff;
+  box-shadow: 0 8px 25px rgba(255, 46, 46, 0.3);
+}
+
+.track-order-btn:hover {
+  box-shadow: 0 12px 35px rgba(255, 46, 46, 0.4);
+  transform: translateY(-2px);
+}
+
+.continue-shopping-btn {
+  background: rgba(102, 252, 241, 0.1);
+  color: #66FCF1;
+  border: 2px solid #66FCF1;
+  box-shadow: 0 8px 25px rgba(102, 252, 241, 0.2);
+}
+
+.continue-shopping-btn:hover {
+  background: rgba(102, 252, 241, 0.2);
+  box-shadow: 0 12px 35px rgba(102, 252, 241, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Floating Particles */
+.floating-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #FF2E2E, #66FCF1);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+}
+
+/* Background Animation */
+.order-success-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255, 46, 46, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(102, 252, 241, 0.1) 0%, transparent 50%);
+  animation: backgroundPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes backgroundPulse {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+/* Button Ripple Effect */
+.track-order-btn::before,
+.continue-shopping-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+  transform: translate(-50%, -50%);
+}
+
+.track-order-btn:active::before,
+.continue-shopping-btn:active::before {
+  width: 300px;
+  height: 300px;
+  top: 50%;
+  left: 50%;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .order-success-page {
+    padding: 16px;
+  }
+  
+  .success-circle {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .success-title {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+  
+  .success-message {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .order-details {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .order-id-value {
+    font-size: 18px;
+  }
+  
+  .order-total-value {
+    font-size: 20px;
+  }
+  
+  .success-actions {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .track-order-btn, .continue-shopping-btn {
+    min-width: 100%;
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .success-title {
+    font-size: 28px;
+  }
+  
+  .success-message {
+    font-size: 15px;
+  }
+  
+  .order-details {
+    padding: 16px;
+  }
+  
+  .order-id, .order-total {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  
+  .confirmation-note {
+    font-size: 13px;
+    margin-bottom: 32px;
+  }
+}
+
+/* Loading Animation for Initial State */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-content > * {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.success-content > *:nth-child(1) { animation-delay: 0.1s; }
+.success-content > *:nth-child(2) { animation-delay: 0.2s; }
+.success-content > *:nth-child(3) { animation-delay: 0.3s; }
+.success-content > *:nth-child(4) { animation-delay: 0.4s; }
+.success-content > *:nth-child(5) { animation-delay: 0.5s; }

@@ -3,6 +3,7 @@ import { collection, query, where, getDocs, addDoc, updateDoc, doc, increment } 
 import { db } from '../../firebase';
 import { useAuth } from '../../context/AuthContext';
 import BackButton from '../../components/BackButton';
+import OrderTracker from '../../components/OrderTracker';
 import toast from 'react-hot-toast';
 import { FiRotateCcw, FiX } from 'react-icons/fi';
 import './Orders.css';
@@ -151,7 +152,8 @@ const Orders = () => {
     const colors = {
       pending: '#fbbf24',
       processing: '#60a5fa',
-      shipped: '#a78bfa',
+      packed: '#a78bfa',
+      shipped: '#8b5cf6',
       delivered: '#4ade80',
       cancelled: '#f87171'
     };
@@ -187,6 +189,11 @@ const Orders = () => {
                   {order.status}
                 </span>
               </div>
+
+              {/* Order Tracking Progress Bar */}
+              {order.status?.toLowerCase() !== 'cancelled' && (
+                <OrderTracker status={order.status} />
+              )}
 
               <div className="order-products">
                 {order.products?.map((item, idx) => (

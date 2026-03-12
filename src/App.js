@@ -38,6 +38,7 @@ import Favorites from './pages/user/Favorites';
 import Cart from './pages/user/Cart';
 import Checkout from './pages/user/Checkout';
 import Orders from './pages/user/Orders';
+import OrderSuccessSimple from './pages/user/OrderSuccessSimple';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -114,6 +115,7 @@ function App() {
               <Route path="cart" element={<Cart />} />
               <Route path="checkout" element={<Checkout />} />
               <Route path="orders" element={<Orders />} />
+              <Route path="order-success" element={<OrderSuccessSimple />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" />} />

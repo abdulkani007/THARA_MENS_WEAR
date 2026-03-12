@@ -90,7 +90,8 @@ const AdminOrders = () => {
     const colors = {
       pending: '#f59e0b',
       processing: '#3b82f6',
-      shipped: '#8b5cf6',
+      packed: '#8b5cf6',
+      shipped: '#a78bfa',
       delivered: '#22c55e',
       cancelled: '#ef4444'
     };
@@ -397,6 +398,7 @@ const AdminOrders = () => {
                 >
                   <option value="pending">Pending</option>
                   <option value="processing">Processing</option>
+                  <option value="packed">Packed</option>
                   <option value="shipped">Shipped</option>
                   <option value="delivered">Delivered</option>
                   <option value="cancelled">Cancelled</option>
@@ -644,6 +646,7 @@ const AdminOrders = () => {
                 >
                   <option value="pending">Pending</option>
                   <option value="processing">Processing</option>
+                  <option value="packed">Packed</option>
                   <option value="shipped">Shipped</option>
                   <option value="delivered">Delivered</option>
                   <option value="cancelled">Cancelled</option>
