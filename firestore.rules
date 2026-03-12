@@ -108,5 +108,11 @@ service cloud.firestore {
       allow update: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
       allow delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+    
+    // Login Sessions collection - authenticated users can create, admin can read all
+    match /loginSessions/{sessionId} {
+      allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow create, update: if request.auth != null;
+    }
   }
 }

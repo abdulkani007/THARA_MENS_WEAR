@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import axios from 'axios';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -27,9 +26,18 @@ export const AuthProvider = ({ children }) => {
             setUserRole(role);
           }
           
-          // Track login
+          // Track login in loginSessions collection
           try {
-            await axios.post('http://localhost:5000/api/admin/track-login');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const sessionId = `${user.uid}_${today.getTime()}`;
+            
+            await setDoc(doc(db, 'loginSessions', sessionId), {
+              uid: user.uid,
+              email: user.email,
+              loginTime: serverTimestamp(),
+              date: today
+            }, { merge: true });
           } catch (error) {
             console.error('Error tracking login:', error);
           }

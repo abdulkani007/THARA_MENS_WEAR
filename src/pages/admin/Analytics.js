@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { FiDollarSign, FiUsers, FiShoppingCart, FiArrowUp, FiArrowDown } from 'react-icons/fi';
+import { FiDollarSign, FiUsers, FiShoppingCart, FiArrowUp, FiArrowDown, FiAlertCircle } from 'react-icons/fi';
 import ReactApexChart from 'react-apexcharts';
-import axios from 'axios';
 
 const Analytics = () => {
   const [loading, setLoading] = useState(true);
@@ -21,6 +20,7 @@ const Analytics = () => {
   const [ordersData, setOrdersData] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
   const [loginData, setLoginData] = useState([]);
+  const [lowStockProducts, setLowStockProducts] = useState([]);
 
   useEffect(() => {
     const loadAnalytics = async () => {
@@ -57,10 +57,23 @@ const Analytics = () => {
         });
 
         let lowStockCount = 0;
+        const lowStockItems = [];
         productsSnap.docs.forEach(doc => {
           const stock = doc.data().stock || 0;
-          if (stock < 10) lowStockCount++;
+          if (stock < 10) {
+            lowStockCount++;
+            lowStockItems.push({
+              id: doc.id,
+              name: doc.data().name,
+              stock: stock,
+              category: doc.data().category || 'N/A'
+            });
+          }
         });
+        
+        // Sort by stock (lowest first)
+        lowStockItems.sort((a, b) => a.stock - b.stock);
+        setLowStockProducts(lowStockItems);
 
         // Process orders data
         const ordersLast7Days = [];
@@ -106,39 +119,57 @@ const Analytics = () => {
           });
         }
 
-        // Fetch login stats
-        try {
-          const loginResponse = await axios.get('http://localhost:5000/api/admin/login-stats');
-          const weeklyResponse = await axios.get('http://localhost:5000/api/admin/login-stats/weekly');
-          
-          setStats({
-            todayOrders: todayOrdersCount,
-            todayRevenue: todayRevenueTotal,
-            totalProducts: productsSnap.size,
-            totalCustomers: usersSnap.size,
-            lowStockProducts: lowStockCount,
-            yesterdayOrders: yesterdayOrdersCount,
-            yesterdayRevenue: yesterdayRevenueTotal,
-            todayLogins: loginResponse.data.todayLogins,
-            yesterdayLogins: loginResponse.data.yesterdayLogins
-          });
+        // Fetch login stats from Firestore
+        const loginSessionsSnap = await getDocs(collection(db, 'loginSessions'));
+        
+        let todayLoginsCount = 0;
+        let yesterdayLoginsCount = 0;
+        const loginsByDay = {};
 
-          setLoginData(weeklyResponse.data.data);
-        } catch (error) {
-          console.error('Error fetching login stats:', error);
-          setStats({
-            todayOrders: todayOrdersCount,
-            todayRevenue: todayRevenueTotal,
-            totalProducts: productsSnap.size,
-            totalCustomers: usersSnap.size,
-            lowStockProducts: lowStockCount,
-            yesterdayOrders: yesterdayOrdersCount,
-            yesterdayRevenue: yesterdayRevenueTotal,
-            todayLogins: 0,
-            yesterdayLogins: 0
+        loginSessionsSnap.docs.forEach(doc => {
+          const loginDate = doc.data().date?.toDate();
+          if (!loginDate) return;
+          
+          if (loginDate >= todayStart) {
+            todayLoginsCount++;
+          } else if (loginDate >= yesterdayStart && loginDate < todayStart) {
+            yesterdayLoginsCount++;
+          }
+          
+          // Count logins for last 7 days
+          const dateKey = loginDate.toDateString();
+          loginsByDay[dateKey] = (loginsByDay[dateKey] || 0) + 1;
+        });
+
+        // Process login data for last 7 days
+        const loginLast7Days = [];
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          date.setHours(0, 0, 0, 0);
+          
+          const dateKey = date.toDateString();
+          const count = loginsByDay[dateKey] || 0;
+
+          loginLast7Days.push({
+            date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+            count: count
           });
-          setLoginData([]);
         }
+
+        setStats({
+          todayOrders: todayOrdersCount,
+          todayRevenue: todayRevenueTotal,
+          totalProducts: productsSnap.size,
+          totalCustomers: usersSnap.size,
+          lowStockProducts: lowStockCount,
+          yesterdayOrders: yesterdayOrdersCount,
+          yesterdayRevenue: yesterdayRevenueTotal,
+          todayLogins: todayLoginsCount,
+          yesterdayLogins: yesterdayLoginsCount
+        });
+
+        setLoginData(loginLast7Days);
 
         setOrdersData(ordersLast7Days);
         setRevenueData(revenueLast7Days);
@@ -432,6 +463,87 @@ const Analytics = () => {
             </div>
           </div>
         </div>
+
+        {/* Total Products Card */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%)',
+          border: '1px solid rgba(139, 92, 246, 0.2)',
+          borderRadius: '16px',
+          padding: '24px',
+          transition: 'all 0.3s ease',
+          cursor: 'pointer',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+        }} onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 8px 30px rgba(139, 92, 246, 0.4)';
+        }} onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ padding: '12px', background: 'rgba(139, 92, 246, 0.2)', borderRadius: '12px' }}>
+              <FiShoppingCart size={24} style={{ color: '#8b5cf6' }} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)', textTransform: 'uppercase', letterSpacing: '1.2px', fontWeight: '600', marginBottom: '4px' }}>Total Products</h3>
+              <p style={{ fontSize: '32px', fontWeight: '700', color: '#fff', lineHeight: '1' }}>{stats.totalProducts}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Total Customers Card */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%)',
+          border: '1px solid rgba(236, 72, 153, 0.2)',
+          borderRadius: '16px',
+          padding: '24px',
+          transition: 'all 0.3s ease',
+          cursor: 'pointer',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+        }} onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 8px 30px rgba(236, 72, 153, 0.4)';
+        }} onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ padding: '12px', background: 'rgba(236, 72, 153, 0.2)', borderRadius: '12px' }}>
+              <FiUsers size={24} style={{ color: '#ec4899' }} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)', textTransform: 'uppercase', letterSpacing: '1.2px', fontWeight: '600', marginBottom: '4px' }}>Total Customers</h3>
+              <p style={{ fontSize: '32px', fontWeight: '700', color: '#fff', lineHeight: '1' }}>{stats.totalCustomers}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Low Stock Alert Card */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%)',
+          border: '1px solid rgba(251, 146, 60, 0.2)',
+          borderRadius: '16px',
+          padding: '24px',
+          transition: 'all 0.3s ease',
+          cursor: 'pointer',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+        }} onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 8px 30px rgba(251, 146, 60, 0.4)';
+        }} onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ padding: '12px', background: 'rgba(251, 146, 60, 0.2)', borderRadius: '12px' }}>
+              <FiAlertCircle size={24} style={{ color: '#fb923c' }} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)', textTransform: 'uppercase', letterSpacing: '1.2px', fontWeight: '600', marginBottom: '4px' }}>Low Stock Alert</h3>
+              <p style={{ fontSize: '32px', fontWeight: '700', color: '#fff', lineHeight: '1' }}>{stats.lowStockProducts}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Orders Chart */}
@@ -452,13 +564,57 @@ const Analytics = () => {
         />
       </div>
 
-      {/* Revenue and Login Charts */}
+      {/* User Login Analytics Section */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(102, 252, 241, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
+        border: '1px solid rgba(102, 252, 241, 0.2)',
+        borderRadius: '16px',
+        padding: '32px',
+        marginBottom: '30px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+      }}>
+        <div style={{ marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px', color: '#66FCF1' }}>User Login Analytics</h2>
+          <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px' }}>Track daily user login activity</p>
+        </div>
+        
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+          padding: '20px',
+          background: 'rgba(102, 252, 241, 0.1)',
+          borderRadius: '12px',
+          marginBottom: '24px',
+          border: '1px solid rgba(102, 252, 241, 0.2)'
+        }}>
+          <div style={{
+            padding: '16px',
+            background: 'rgba(102, 252, 241, 0.2)',
+            borderRadius: '12px'
+          }}>
+            <FiUsers size={32} style={{ color: '#66FCF1' }} />
+          </div>
+          <div>
+            <p style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>Users Logged In Today</p>
+            <p style={{ fontSize: '36px', fontWeight: '700', color: '#fff', lineHeight: '1' }}>{stats.todayLogins}</p>
+          </div>
+        </div>
+
+        <ReactApexChart
+          options={loginChartOptions}
+          series={[{ name: 'Logins', data: loginData.map(d => d.count) }]}
+          type="bar"
+          height={300}
+        />
+      </div>
+
+      {/* Revenue Chart */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
         gap: '30px'
       }}>
-        {/* Revenue Chart */}
         <div style={{
           background: '#111111',
           border: '1px solid #1F2833',
@@ -475,7 +631,7 @@ const Analytics = () => {
           />
         </div>
 
-        {/* Login Activity Chart */}
+        {/* Low Stock Products Table */}
         <div style={{
           background: '#111111',
           border: '1px solid #1F2833',
@@ -483,13 +639,45 @@ const Analytics = () => {
           padding: '24px',
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
         }}>
-          <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '20px', color: '#fff' }}>Login Activity (Last 7 Days)</h2>
-          <ReactApexChart
-            options={loginChartOptions}
-            series={[{ name: 'Logins', data: loginData.map(d => d.count) }]}
-            type="bar"
-            height={300}
-          />
+          <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '20px', color: '#fff' }}>Low Stock Products</h2>
+          <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            {lowStockProducts.length === 0 ? (
+              <p style={{ color: 'rgba(255, 255, 255, 0.5)', textAlign: 'center', padding: '40px 0' }}>All products are well stocked!</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {lowStockProducts.map((product, index) => (
+                  <div key={product.id} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '16px',
+                    background: product.stock === 0 ? 'rgba(239, 68, 68, 0.1)' : product.stock < 5 ? 'rgba(251, 146, 60, 0.1)' : 'rgba(234, 179, 8, 0.1)',
+                    border: `1px solid ${product.stock === 0 ? 'rgba(239, 68, 68, 0.3)' : product.stock < 5 ? 'rgba(251, 146, 60, 0.3)' : 'rgba(234, 179, 8, 0.3)'}`,
+                    borderRadius: '8px',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: '14px', fontWeight: '600', color: '#fff', marginBottom: '4px' }}>{product.name}</p>
+                      <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.5)' }}>{product.category}</p>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 16px',
+                      background: product.stock === 0 ? 'rgba(239, 68, 68, 0.2)' : product.stock < 5 ? 'rgba(251, 146, 60, 0.2)' : 'rgba(234, 179, 8, 0.2)',
+                      borderRadius: '20px'
+                    }}>
+                      <FiAlertCircle size={16} style={{ color: product.stock === 0 ? '#ef4444' : product.stock < 5 ? '#fb923c' : '#eab308' }} />
+                      <span style={{ fontSize: '14px', fontWeight: '700', color: product.stock === 0 ? '#ef4444' : product.stock < 5 ? '#fb923c' : '#eab308' }}>
+                        {product.stock} {product.stock === 1 ? 'unit' : 'units'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
