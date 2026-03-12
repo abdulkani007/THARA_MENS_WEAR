@@ -99,6 +99,18 @@ const Footer = () => {
             </div>
           </div>
         </div>
+
+        <div className="footer-track-store">
+          <button 
+            className="track-store-btn"
+            onClick={() => window.open(
+              "https://www.google.com/maps/dir/?api=1&destination=Thara+Mens+Wear+Veppur",
+              "_blank"
+            )}
+          >
+            <FiMapPin /> Track Store
+          </button>
+        </div>
       </div>
 
       <div className="footer-bottom">
